@@ -1,5 +1,5 @@
 METAFILE: configs/metadata.csv
 # REF = /home/data/yzpeng/3-Data/Ref/human/Homo_sapiens.GRCh38.dna.primary_assembly.fa
-GTF: /home/data/yzpeng/3-Data/Ref/human/Homo_sapiens.GRCh38.111.gtf
-# HISAT2_REF = /home/data/yzpeng/3-Data/Ref/human/hisat_test/test_10M
+GTF: /home/data/yzpeng/3-Data/Ref/mouse/Mus_musculus.GRCm39.111.gtf.gz
+HISAT2_INDEX: /home/data/yzpeng/3-Data/Ref/mouse/hisat2/Mus_musculus.GRCm39.dna.primary_assembly
 THREADS: 16
