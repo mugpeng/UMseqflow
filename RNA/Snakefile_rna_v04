@@ -1,0 +1,12 @@
+# The main script to manage the RNA-seq workflow
+include: "rules/common.smk"
+
+rule all:
+    input:
+        get_final_output()
+
+# Include all sub-workflows
+include: "rules/preprocessing.smk"
+include: "rules/hisat.smk"
+include: "rules/salmon.smk"
+include: "rules/multiqc.smk" 
