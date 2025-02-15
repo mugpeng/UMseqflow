@@ -48,7 +48,7 @@ make decoy seq:
 
 ```
 mkdir salmon
-grep "^>" <(gunzip -c GRCh38.primary_assembly.genome.fa.gz) | cut -d " " -f 1 > salmon/decoys.txt
+grep "^>" GRCh38.primary_assembly.genome.fa.gz | cut -d " " -f 1 > salmon/decoys.txt
 cd salmon
 sed -i.bak -e 's/>//g' decoys.txt
 ```
@@ -67,10 +67,28 @@ nohup salmon index -t gentrome.fa.gz -d decoys.txt -p 12 -i salmon_index --genco
 
 
 
+mouse:
+
+```
+mkdir salmon
+grep "^>" GRCm39.primary_assembly.genome.fa | cut -d " " -f 1 > salmon/decoys.txt
+cd salmon
+sed -i.bak -e 's/>//g' decoys.txt
+
+zcat ../gencode.vM36.transcripts.fa.gz <(cat ../GRCh38.primary_assembly.genome.fa) | pigz -p 32 > gentrome.fa.gz
+nohup salmon index -t gentrome.fa.gz -d decoys.txt -p 12 -i salmon_index --gencode -k 31 &
+```
+
+
+
+
+
 ## Hisat2
 
 ```
 nohup hisat2-build -p 32 ../GRCh38.primary_assembly.genome.fa genecode_v47.genome &
+
+nohup hisat2-build -p 32 ../GRCm39.primary_assembly.genome.fa genecode_v36.genome &
 ```
 
 
@@ -131,9 +149,16 @@ zcat gencode.v47.primary_assembly.annotation.gtf.gz | awk 'BEGIN{OFS="\t";} $3==
 
 
 
+## GATK build GRCm39 resource bundle
+
+
+
+
+
+
+
 ## ANNOVAR
 
 For annotation.
-
 
 
