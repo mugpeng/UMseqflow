@@ -15,14 +15,11 @@ structure:
 │   │   ├── config.yaml
 │   │   └── metadata.csv
 │   └── rules
-│       ├── common.smk
-│       ├── hisat.smk
-│       ├── multiqc.smk
-│       ├── preprocessing.smk
-│       └── salmon.smk
-├── configs
-│   ├── config.yaml
-│   └── metadata.csv
+│       ├── common.smk # Input and output
+│       ├── preprocessing.smk # QC and trim
+│       ├── hisat.smk # hisat2+featurecount
+│       └── salmon.smk 
+│       ├── multiqc.smk # multiqc for all steps
 ├── readme.md
 └── setup.md
 ```
