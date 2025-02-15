@@ -145,6 +145,23 @@ You can follow other projects which I also referenced:
 
 
 
+toturial:
+[Snakemake for Biostatistics Quick-Start Tutorial](https://jean997.github.io/snakemake_tutorial/index.html)
+
+https://carpentries-incubator.github.io/snakemake-novice-bioinformatics/
+
+[#snakemake 北野茶缸子](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzU5ODc3OTA0NQ==&action=getalbum&album_id=2426609164623003652&scene=173&sessionid=undefined&enterid=0&from_msgid=2247490534&from_itemidx=4&count=3&nolastread=1&uin=&key=&devicetype=iMac+Mac16%2C10+OSX+OSX+15.0+build(24A8332)&version=13080911&lang=en&nettype=WIFI&ascene=78&fontScale=100)
+
+
+
+Or you can connect with me: mugpeng@outlook.com
+
+
+
+Cursor, copilot, trae are good LLM IDE for coding your smk!
+
+
+
 # Why I am choosing Smk instead of others
 
 nextflow, galaxy...
