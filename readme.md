@@ -29,6 +29,12 @@ structure:
 
 
 
+Only provide RNA mode currently.
+
+![](http://cos01.mugpeng.top/img/workflow.png)
+
+
+
 # TODO
 
 - Major
@@ -57,13 +63,30 @@ Set up the `configs/config.yaml`, `configs/metadata.csv`
 
 
 
-Make make `metadata.csv`: 
+First move or use script from `Other useful sript` by soft link to `./raw` folder:
+
+```
+$ ls raw
+HB_1_1.fq.gz  HB_1_2.fq.gz  UH_1_1.fq.gz  UH_1_2.fq.gz
+```
+
+
+
+Then run for making  `metadata.csv` :
 
 ```
 echo "sample" > metadata.csv
 ls raw/*.fq.gz | sed 's/_[12].fq.gz$//' | sed 's|^raw/||' | sort | uniq >> metadata.csv
 mv metadata.csv configs/metadata.csv
 ```
+
+
+
+## RNA
+
+You can decide call salmon, hisat2+featurecount or both by leaving the path for these index empty or not. 
+
+![](http://cos01.mugpeng.top/img/workflow.png)
 
 
 
@@ -108,7 +131,9 @@ publish to github. Welcome!
 
 
 
-# ref
+# Contribution
+
+You can follow other projects which I also referenced:
 
 [Fred-White94/snakemake_rnaseq: A Snakemake pipeline to go from fastq mRNA sequencing files to raw and normalised counts (usable for downstream EDA and differential analysis)](https://github.com/Fred-White94/snakemake_rnaseq)
 
@@ -117,3 +142,9 @@ publish to github. Welcome!
 [zhxiaokang/RASflow: RNA-Seq analysis workflow](https://github.com/zhxiaokang/RASflow)
 
 [基于GATK4标准找变异方法的自动化工作流程oVarFlow的使用-腾讯云开发者社区-腾讯云](https://cloud.tencent.com/developer/article/2032022)
+
+
+
+# Why I am choosing Smk instead of others
+
+nextflow, galaxy...

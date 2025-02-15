@@ -7,9 +7,11 @@ THREADS: 16
 
 # ================== HISAT2 parameters ==================
 HISAT2_INDEX: /home/mugpeng/share_data/genome/GRCh38_gencode_v47/hisat2/genecode_v47.genome
+# Leave empty to skip hisat mode
 
 # ================== Salmon parameters ==================
 SALMON_INDEX: /home/mugpeng/share_data/genome/GRCh38_gencode_v47/salmon/salmon_index
+# Leave empty to skip salmon mode
 
 # ================== Control of the workflow ==================
 ## Do you need to do quality control?
