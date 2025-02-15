@@ -13,7 +13,7 @@ SALMON_INDEX: /home/mugpeng/share_data/genome/GRCh38_gencode_v47/salmon/salmon_i
 
 # ================== Control of the workflow ==================
 ## Do you need to do quality control?
-QC: no  # "yes" or "no"
+QC: "yes"  # "yes" or "no"
 
-## Do you need to do trimming?
-TRIMMED: no  # "yes" or "no"? 
+## Do you need to do multiqc for trimming?
+TRIMMED: "yes"  # "yes" or "no"? 

@@ -1,8 +1,8 @@
 rule multiqc_all:
     input:
-        raw_qc = expand("1-fastqc/{sample}_{strand}_fastqc.zip", sample=SAMPLES, strand=STRANDS) if qc == "yes" else [],
-        clean_qc = expand("2-clean/{sample}_{strand}_val_{strand}_fastqc.zip", sample=SAMPLES, strand=STRANDS) if trim == "yes" else [],
-        hisat_counts = "4-counts/all.id.txt.summary" if HISAT2_INDEX else [],
+        raw_qc = expand("fastqc/{sample}_{strand}_fastqc.zip", sample=SAMPLES, strand=STRANDS) if qc == "yes" else [],
+        clean_qc = expand("clean/{sample}_{strand}_val_{strand}_fastqc.zip", sample=SAMPLES, strand=STRANDS) if trim == "yes" else [],
+        hisat_counts = "counts/all.id.txt.summary" if HISAT2_INDEX else [],
         hisat_logs = expand("logs/hisat2/{sample}.log", sample=SAMPLES) if HISAT2_INDEX else [],
         salmon_outputs = expand("salmon/quant/{sample}.count/", sample=SAMPLES) if SALMON_INDEX else []
     output:

@@ -26,5 +26,5 @@ rule trim:
         "logs/trim/{sample}.log"
     shell:
         "trim_galore -j {threads} --phred33 -q {params.quality} "
-        "--length {params.length} --fastqc --paired "
-        "-o ./clean/ {input.fq1} {input.fq2} &> {log}" 
+        "--length {params.length} --fastqc --fastqc_args '-t {threads}' --paired "
+        "-o ./clean/ {input.fq1} {input.fq2} &> {log}"
