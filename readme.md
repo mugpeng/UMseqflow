@@ -83,7 +83,7 @@ You can visualize the pipeline through `graphviz`:
 ```
 snakemake --dag -s RNA/Snakefile_rna_v04 | dot -Tpdf > workflow.pdf
 
-snakemake --dag -s RNA/Snakefile_rna_v04 | dot -Tpng > workflow.png
+snakemake --dag -s Snakefile_rna_v04 | dot -Tpng > workflow.png
 ```
 
 
