@@ -2,20 +2,18 @@
 
 # ================== Shared parameters for some or all of the sub-workflows ==================
 METAFILE: configs/metadata.csv
-GTF: /home/mugpeng/share_data/genome/GRCh38_gencode_v47/gencode.v47.primary_assembly.annotation.gtf.gz
+GTF: xxx/gencode.v47.primary_assembly.annotation.gtf.gz
 THREADS: 16
 
 # ================== HISAT2 parameters ==================
-HISAT2_INDEX: /home/mugpeng/share_data/genome/GRCh38_gencode_v47/hisat2/genecode_v47.genome
-# Leave empty to skip hisat mode
+HISAT2_INDEX: xx/hisat2/genecode_v47.genome
 
 # ================== Salmon parameters ==================
-SALMON_INDEX: /home/mugpeng/share_data/genome/GRCh38_gencode_v47/salmon/salmon_index
-# Leave empty to skip salmon mode
+SALMON_INDEX: xx/salmon/salmon_index
 
 # ================== Control of the workflow ==================
 ## Do you need to do quality control?
 QC: "yes"  # "yes" or "no"
 
-## Do you need to do multiqc for trimming?
+## Do you need to do trimming?
 TRIMMED: "yes"  # "yes" or "no"? 

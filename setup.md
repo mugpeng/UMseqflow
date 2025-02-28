@@ -145,13 +145,138 @@ bed files for mutect2:
 
 ```
 zcat gencode.v47.primary_assembly.annotation.gtf.gz | awk 'BEGIN{OFS="\t";} $3=="exon" {print $1,$4-1,$5}' | sort -k1,1 -k2,2n| bedtools merge > hg38_gencode_gtf_exon.bed
+
+zcat gencode.vM36.primary_assembly.annotation.gtf.gz | awk 'BEGIN{OFS="\t";} $3=="exon" {print $1,$4-1,$5}' | sort -k1,1 -k2,2n| bedtools merge > GRCh39_gencode_gtf_exon.bed
 ```
 
 
 
 ## GATK build GRCm39 resource bundle
 
+Ref:
 
+[liftover,crossmap进行坐标转换时用到的chain文件介绍 - Zhongxu blog](https://www.zxzyl.com/archives/838/)
+
+[为小鼠(GRCm38) 构建 GATK resource bundle - 简书](https://www.jianshu.com/p/dfe67e99151c)
+[genomics/workflows/gatk-mouse-mm10.md at master · igordot/genomics](https://github.com/igordot/genomics/blob/master/workflows/gatk-mouse-mm10.md)
+
+
+
+about vcf file: [30. 理解vcf 文件](https://www.yuque.com/mugpeng/sequence/bi0q4a)
+
+
+
+download GRCm38 indel and snp:
+
+```
+# SNP
+nohup wget -c https://ftp.ebi.ac.uk/pub/databases/mousegenomes/REL-1505-SNPs_Indels/mgp.v5.merged.indels.dbSNP142.normed.vcf.gz &
+
+nohup wget -c https://ftp.ebi.ac.uk/pub/databases/mousegenomes/REL-1505-SNPs_Indels/mgp.v5.merged.indels.dbSNP142.normed.vcf.gz.tbi &
+
+# INDEL
+nohup wget -c ftp://ftp.ncbi.nih.gov/snp/organisms/archive/mouse_10090/VCF/00-All.vcf.gz & 
+nohup wget -c ftp://ftp.ncbi.nih.gov/snp/organisms/archive/mouse_10090/VCF/00-All.vcf.gz.tbi &
+```
+
+
+
+SNP:
+
+``` 
+# from GRCm38 to mm10
+zcat GRCm38/00-All.vcf.gz | sed 's/^\([0-9XY]\)/chr\1/' > mm10/00-All.vcf
+
+# from mm10 to GRCm39
+# nohup CrossMap vcf crossmap/mm10ToMm39.over.chain.gz mm10/00-All.vcf ../genome/gencode_v36/GRCm39.primary_assembly.genome.fa GRCm39/00-All.vcf &
+
+# crossmap it after sort
+```
+
+
+
+Indel:
+
+```
+# from GRCm38 to mm10
+# adjust header
+zcat GRCm38/mgp.v5.merged.indels.dbSNP142.normed.vcf.gz | head -1000 | grep "^#" | cut -f 1-8 \
+| grep -v "#contig" | grep -v "#source" \
+> mm10/mgp.v5.indels.dbSNP142.vcf
+# keep only passing and adjust chromosome name
+zcat GRCm38/mgp.v5.merged.indels.dbSNP142.normed.vcf.gz | grep -v "^#" | cut -f 1-8 \
+| sed 's/^\([0-9MXY]\)/chr\1/' \
+>> mm10/mgp.v5.indels.dbSNP142.vcf
+# filter pass
+zcat GRCm38/mgp.v5.merged.indels.dbSNP142.normed.vcf.gz | head -1000 | grep "^#" | cut -f 1-8 \
+| grep -v "#contig" | grep -v "#source" \
+> mm10/mgp.v5.indels.dbSNP142.pass.vcf
+# keep only passing and adjust chromosome name
+zcat GRCm38/mgp.v5.merged.indels.dbSNP142.normed.vcf.gz | grep -v "^#" | cut -f 1-8 \
+| grep -w "PASS" | sed 's/^\([0-9MXY]\)/chr\1/' \
+>> mm10/mgp.v5.indels.dbSNP142.pass.vcf &
+
+# from mm10 to GRCm39
+nohup CrossMap vcf crossmap/mm10ToMm39.over.chain.gz mm10/mgp.v5.indels.dbSNP142.pass.vcf ../genome/gencode_v36/GRCm39.primary_assembly.genome.fa GRCm39/mgp.v5.indels.dbSNP142.pass.vcf &
+```
+
+
+
+sort vcf or it will produce errors:
+
+```
+> [E::hts_idx_push] Unsorted positions on sequence #3: 7719079 followed by 7719047
+tbx_index_build3 failed: GRCm39/mgp.v5.indels.dbSNP142.pass.vcf.gz
+```
+
+
+
+```
+samtools dict ../genome/gencode_v36/GRCm39.primary_assembly.genome.fa > ../genome/gencode_v36/GRCm39.primary_assembly.genome.dict
+# sort vcf
+nohup gatk SortVcf  \
+  -I GRCm39/mgp.v5.indels.dbSNP142.pass.vcf \
+  -O GRCm39/mgp.v5.indels.dbSNP142.pass.sort.vcf \
+  # -R ../genome/gencode_v36/GRCm39.primary_assembly.genome.fa \
+  -SD ../genome/gencode_v36/GRCm39.primary_assembly.genome.dict &
+
+
+# FOR SNP 00-All.vcf file
+nohup gatk UpdateVcfSequenceDictionary \
+ I=mm10/00-All.vcf \
+ O=mm10/00-All.update.vcf \
+ SEQUENCE_DICTIONARY=../genome/gencode_v36/GRCm39.primary_assembly.genome.dict &
+
+nohup gatk --java-options "-Xmx100G -Djava.io.tmpdir=./" SortVcf \
+   -I mm10/00-All.update.vcf \
+   -O mm10/00-All.sort.vcf \
+   -SD ../genome/gencode_v36/GRCm39.primary_assembly.genome.dict &
+
+# nohup gatk SortVcf  \
+#    -I GRCm39/00-All.update.vcf \
+#    -O GRCm39/00-All.sort.vcf \
+#    -SD ../genome/gencode_v36/GRCm39.primary_assembly.genome.dict &
+
+nohup CrossMap vcf crossmap/mm10ToMm39.over.chain.gz mm10/00-All.sort.vcf ../genome/gencode_v36/GRCm39.primary_assembly.genome.fa GRCm39/00-All.sort.vcf &
+
+# nohup bcftools reheader -f ../genome/gencode_v36/GRCm39.primary_assembly.genome.fa GRCm39/00-All.vcf > GRCm39/00-All.sort.vcf &
+```
+
+Use R parameter will produce: `Caused by: java.lang.AssertionError: SAM dictionaries are not the same`
+
+
+
+compress vcf and make index:
+
+```
+# bgzip -@ 32 -d GRCm39/00-All.vcf.gz &
+# bgzip -@ 32 -d GRCm39/mgp.v5.indels.dbSNP142.pass.vcf.gz &
+bgzip -@ 32 GRCm39/00-All.vcf &
+bgzip -@ 32 GRCm39/mgp.v5.indels.dbSNP142.pass.vcf &
+
+tabix -p vcf GRCm39/00-All.vcf.gz &
+tabix -p vcf GRCm39/mgp.v5.indels.dbSNP142.pass.vcf.gz &
+```
 
 
 
@@ -161,4 +286,17 @@ zcat gencode.v47.primary_assembly.annotation.gtf.gz | awk 'BEGIN{OFS="\t";} $3==
 
 For annotation.
 
+
+
+## Copy number
+
+[Bioinformatics Pipeline: DNA-Seq Analysis: Whole Genome Sequencing Variant Calling - GDC Docs](https://docs.gdc.cancer.gov/Data/Bioinformatics_Pipelines/DNA_Seq_WGS/)
+
+
+
+### Gistic2
+
+Ref: [GISTIC Documentation](https://broadinstitute.github.io/gistic2/)
+
+fetch mouse gistic2 mat: [roland-rad-lab/MoCaSeq: Analysis pipelines for cancer genome sequencing in mice.](https://github.com/roland-rad-lab/MoCaSeq)
 

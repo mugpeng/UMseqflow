@@ -34,19 +34,20 @@ Only provide RNA mode currently.
 
 # TODO
 
-- Major
+## Major
 
 - [ ] WES mode
 - [ ] package into docker
-- [x]  Publish to GitHub
+- [x] Publish to GitHub
+- [ ] reason: Code has changed since last execution, fix 
 
 
 
-- Minor
+## Minor
 
 - [ ] Revise trim mode
 - [ ] Update Ref files into ali netdisk
-- [ ] trim part qc is slow(run trim, run other part)
+- [x] trim part qc is slow(run trim, run other part)
 
 
 
@@ -117,6 +118,24 @@ snakemake --dag -s Snakefile_rna_v04 | dot -Tpng > workflow.png
 ```
 find ../../X201SC24128617-Z01-F001/01.RawData -type f -name '*fq.gz' -exec ln -s {} . \;
 ```
+
+
+
+- make a metadata
+
+```
+echo "sample" > config.yaml/metadata.csv && ls SRR* | sed 's/_[12]\.fastq\.gz$//' | sort | uniq >> config.yaml/metadata.csv
+```
+
+
+
+- rename fq
+
+```
+for file in *.fastq.gz; do mv "$file" "${file/fastq/fq}"; done
+```
+
+
 
 
 
